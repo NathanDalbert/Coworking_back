@@ -1,0 +1,31 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=meubanco'        # Nome do banco de dados
+      - 'POSTGRES_USER=admin'          # Usuário do banco de dados
+      - 'POSTGRES_PASSWORD=admin'      # Senha do banco de dados
+    ports:
+      - '5432:5432'                    # Mapeamento da porta do container para a máquina local
+    networks:
+      - mynetwork
+
+  # Seu serviço Spring Boot
+  springboot:
+    build: .
+    ports:
+      - '8080:8080'                    # Mapeamento da porta para acessar o Spring Boot
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/meubanco
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
