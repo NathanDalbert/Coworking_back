@@ -1,31 +1,39 @@
-version: '3'
+
+
 services:
-  postgres:
-    image: 'postgres:latest'
+  postgresdb:
+    image: postgres
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      - 'POSTGRES_DB=meubanco'        # Nome do banco de dados
-      - 'POSTGRES_USER=admin'          # Usuário do banco de dados
-      - 'POSTGRES_PASSWORD=admin'      # Senha do banco de dados
+      POSTGRES_USER: ${POSTGRESDB_USER}
+      POSTGRES_PASSWORD: ${POSTGRESDB_ROOT_PASSWORD}
+      POSTGRES_DB: ${POSTGRESDB_DATABASE}
     ports:
-      - '5432:5432'                    # Mapeamento da porta do container para a máquina local
-    networks:
-      - mynetwork
+      - ${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}
+    volumes:
+      - db:/var/lib/postgresql/data
 
-  # Seu serviço Spring Boot
-  springboot:
-    build: .
-    ports:
-      - '8080:8080'                    # Mapeamento da porta para acessar o Spring Boot
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/meubanco
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin
-      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
+  app:
     depends_on:
-      - postgres
-    networks:
-      - mynetwork
+      - postgresdb
+    build: .
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:postgresql://postgresdb:${POSTGRESDB_DOCKER_PORT}/${POSTGRESDB_DATABASE}",
+        "spring.datasource.username": "${POSTGRESDB_USER}",
+        "spring.datasource.password": "${POSTGRESDB_ROOT_PASSWORD}",
+        "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.PostgreSQLDialect",
+        "spring.jpa.hibernate.ddl-auto": "create-drop"
+      }'
+    volumes:
+      - ~/.m2:/root/.m2
+    stdin_open: true
+    tty: true
 
-networks:
-  mynetwork:
-    driver: bridge
+volumes:
+  db:
