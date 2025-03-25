@@ -1,4 +1,4 @@
-package com.Coworking.demo.modules.usuario.localidades.DTO;
+package com.Coworking.demo.modules.localidades.DTO;
 
 import java.util.UUID;
 

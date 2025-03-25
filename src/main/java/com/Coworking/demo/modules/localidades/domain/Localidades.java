@@ -1,4 +1,4 @@
-package com.Coworking.demo.modules.usuario.localidades.domain;
+package com.Coworking.demo.modules.localidades.domain;
 
 import com.Coworking.demo.modules.usuario.domain.Usuario;
 import jakarta.persistence.*;
