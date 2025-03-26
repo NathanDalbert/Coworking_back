@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Localidades {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private UUID idLocal;
 
     @Column(name = "nome_local")
     private String nomeLocal;
@@ -27,17 +27,16 @@ public class Localidades {
     private String localizacao;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "locador_id")
     private Usuario usuario;
 
-    public Localidades(String nomeLocal, String descricao, String localizacao, Usuario usuario) {
+    public Localidades(String nomeLocal, String descricao, String localizacao) {
         this.nomeLocal = nomeLocal;
         this.descricao = descricao;
         this.localizacao = localizacao;
-        this.usuario = usuario;
     }
 
-    public static Localidades newLocalidades(String nomeLocal, String descricao, String localizacao, Usuario usuario){
-        return new Localidades(nomeLocal, descricao, localizacao, usuario);
+    public static Localidades newLocalidades(String nomeLocal, String descricao, String localizacao){
+        return new Localidades(nomeLocal, descricao, localizacao);
     }
 }
