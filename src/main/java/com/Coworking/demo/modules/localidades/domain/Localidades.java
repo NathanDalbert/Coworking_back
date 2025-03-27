@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "localidade")
 public class Localidades {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idLocal;
 
     @Column(name = "nome_local")
